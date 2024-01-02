@@ -13,5 +13,6 @@ namespace TicTacToe.Models.Enums
         saveMenu,
         game,
         loads,
+        empty,
     }
 }

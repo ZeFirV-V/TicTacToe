@@ -1,19 +1,22 @@
 ﻿using TicTacToe.CustomsEventArgs;
-using TicTacToe.Models.Commands.MainMenuCommands.BaseMenuCommand;
+using TicTacToe.Models.Contexts.GameContext.Interfaces;
+using TicTacToe.Models.Enums;
+using TicTacToe.View;
 
 namespace TicTacToe.Models.Commands.MainMenuCommands
 {
-    public class CommandContinueGame : BaseMainMenuCommand
+    public class CommandContinueGame : BaseCommand
     {
-        public CommandContinueGame(string name) : base(name)
+        public CommandContinueGame(IGameContext gameContext, IApplicationView applicationView, string name, ApplicationState nextExecutorType) 
+            : base(gameContext, applicationView, name, nextExecutorType)
         {
         }
 
-        public override event EventHandler<CommandEventArgs> OnHappened;
+        public override event EventHandler<ExecutorEventArgs> OnHappened;
 
-        public override void Execute(string[] args)
+        public override void Execute(ICommandContext commandContext)
         {
-            OnHappened(this, new CommandEventArgs());
+            OnHappened(this, new ExecutorEventArgs(nextExecutorName));
             throw new NotImplementedException();
         }
     }

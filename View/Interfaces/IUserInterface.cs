@@ -9,7 +9,6 @@ namespace TicTacToe.View.Interfaces
 {
     public interface IUserInterface
     {
-        public TextWriter Writer { get; }
-        public TextReader Reader { get; }
+        public IApplicationView ApplicationView { get; }
     }
 }

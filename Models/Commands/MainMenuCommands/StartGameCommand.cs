@@ -1,25 +1,25 @@
-﻿using TicTacToe.Models.Commands.MainMenuCommands.BaseMenuCommand;
+﻿using TicTacToe.CustomsEventArgs;
+using TicTacToe.Models.Contexts.GameContext;
+using TicTacToe.Models.Contexts.GameContext.Interfaces;
+using TicTacToe.Models.Enums;
 using TicTacToe.View;
 
 namespace TicTacToe.Models.Commands.MainMenuCommands
 {
-    public class StartGameCommand : BaseMainMenuCommand
+    public class StartGameCommand : BaseCommand
     {
-        public StartGameCommand(string name) : base(name)
+        public StartGameCommand(IGameContext gameContext, IApplicationView applicationView, string name, ApplicationState nextExecutorType) 
+            : base(gameContext, applicationView, name, nextExecutorType)
         { }
 
-        public override event EventHandler OnHappened;
+        public override event EventHandler<ExecutorEventArgs> OnHappened;
 
-        public override void Execute(string[] args)
+        public override void Execute(ICommandContext commandContext)
         {
-            OnHappened(this, EventArgs.Empty);
-            //("Старт игры крестики-нолики");
-            //var boardSize = 3;
-            //var firstPlayer = PlayerCreator.CreatePlayer();
-            //var secondPlayer = PlayerCreator.CreatePlayer();
-            //var board = new Board(boardSize);
-            //var match = new Match(board, firstPlayer, secondPlayer);
-            //ViewBoard.PrintBoard(writer, board.GetMap());
+            OnHappened(this, new ExecutorEventArgs(nextExecutorName));
+            applicationView.ViewText("Старт игры крестики-нолики");
+            var gameCreator = new GameCreator(applicationView);
+            gameContext.StartGame(gameCreator);
         }
     }
 }

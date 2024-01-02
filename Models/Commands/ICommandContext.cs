@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TicTacToe.Enums
+namespace TicTacToe.Models.Commands
 {
-    public enum Symbols
+    public interface ICommandContext
     {
-        empty,
-        circle,
-        cross,
+        string CommandName { get; }
     }
 }

@@ -1,25 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicTacToe.CommandsExecutor.Interfaces;
+﻿using TicTacToe.CommandsExecutor.Interfaces;
 using TicTacToe.CustomsEventArgs;
+using TicTacToe.Models.Enums;
 
 namespace TicTacToe.Services
 {
     public class ExecutorsService
     {
-        public ICommandsExecutor CurrentCommandExecutor { get; set; }
+        public ICommandsExecutor CurrentCommandExecutor { get; private set; }
         private List<ICommandsExecutor> commandsExecutors;
 
-        public ExecutorsService(List<ICommandsExecutor> executors)
+        public ExecutorsService(List<ICommandsExecutor> executors, ICommandsExecutor currentCommandExecutor)
         {
             if(!CheckCorrectArgsExecutors(executors))
             {
                 throw new ArgumentNullException();
             }
+            ///TODO: Сделать проверку currentCommandExecutor
             commandsExecutors = executors;
+            CurrentCommandExecutor = currentCommandExecutor;
+            SubscribeExecutorsChanges(commandsExecutors);
+        }
+
+        public string[] GetCommandsNamesCurrentExecutor()
+        {
+            return CurrentCommandExecutor.GetAvailableCommandsName();
+        }
+
+        private void SubscribeExecutorsChanges(List<ICommandsExecutor> executors)
+        {
+            foreach(var executor in executors)
+            {
+                executor.OnCommittedCommand += ReactSubscriptionExecutorActions;
+            }
         }
 
         private bool CheckCorrectArgsExecutors(List<ICommandsExecutor> executors)
@@ -34,31 +46,22 @@ namespace TicTacToe.Services
 
         private void ReactSubscriptionExecutorActions(object sender, ExecutorEventArgs e)
         {
-            var nameNewExecutor = e.ExecutorName;
-            if (!CheckCurentExecutor(nameNewExecutor))
-                return;
-            var newExecutor = FindCommandExecutor(nameNewExecutor);
-            ChengeCurentExecutor(newExecutor);
+            var typeNewExecutor = e.ExecutorType;
+            if (!CheckCurentExecutor(typeNewExecutor))
+            {
+                throw new Exception("Нет такого Executor в списке, передаете не корректный следующий Executor");
+            }
+            CurrentCommandExecutor = FindCommandExecutor(typeNewExecutor);
         }
 
-        private void SubscribeEvents(List<ICommandsExecutor> executors)
+        public bool CheckCurentExecutor(ApplicationState typeNextExecutor)
         {
-            ///TODO: Сделать подписку к событияем.
+            return commandsExecutors.FindAll(x => x.ExecutorApplicationState.Equals(typeNextExecutor)).Count() > 0;
         }
 
-        public bool CheckCurentExecutor(string nameExecutor)
+        private ICommandsExecutor FindCommandExecutor(ApplicationState typeNextExecutor)
         {
-            return commandsExecutors.FindAll(x => x.ExecutorName.Equals(nameExecutor)).Count() > 0;
-        }
-
-        public void ChengeCurentExecutor(ICommandsExecutor newExecutor)
-        {
-            CurrentCommandExecutor = newExecutor;
-        }
-
-        private ICommandsExecutor FindCommandExecutor(string nameExecutor)
-        {
-            var newExecutor = commandsExecutors.Find(x => x.ExecutorName.Equals(nameExecutor));
+            var newExecutor = commandsExecutors.Find(x => x.ExecutorApplicationState.Equals(typeNextExecutor));
             if(newExecutor == null)
             {
                 throw new Exception();

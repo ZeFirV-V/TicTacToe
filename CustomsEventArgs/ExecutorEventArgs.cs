@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TicTacToe.Models.Enums;
 
 namespace TicTacToe.CustomsEventArgs
 {
     public class ExecutorEventArgs : EventArgs
     {
-        public string ExecutorName { get; }
-        public ExecutorEventArgs(string name)
+        public ApplicationState ExecutorType { get; }
+        public ExecutorEventArgs(ApplicationState typeNextExecutor)
         {
-            ExecutorName = name;
+            ExecutorType = typeNextExecutor;
         }
     }
 }

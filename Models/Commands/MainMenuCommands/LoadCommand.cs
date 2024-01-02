@@ -1,18 +1,22 @@
-﻿using TicTacToe.Models.Commands.MainMenuCommands.BaseMenuCommand;
+﻿using TicTacToe.CustomsEventArgs;
+using TicTacToe.Models.Contexts.GameContext.Interfaces;
+using TicTacToe.Models.Enums;
+using TicTacToe.View;
 
 namespace TicTacToe.Models.Commands.MainMenuCommands
 {
-    public class LoadCommand : BaseMainMenuCommand
+    public class LoadCommand : BaseCommand
     {
-        public LoadCommand(string name) : base(name)
-        { }
-
-        public override event EventHandler OnHappened;
-
-        public override void Execute(string[] args)
+        public LoadCommand(IGameContext gameContext, IApplicationView applicationView, string name, ApplicationState nextExecutorType) : base(gameContext, applicationView, name, nextExecutorType)
         {
-            OnHappened(this, EventArgs.Empty);
-            //("Сохраненные игры крестики-нолики");
+        }
+
+        public override event EventHandler<ExecutorEventArgs> OnHappened;
+
+        public override void Execute(ICommandContext commandContext)
+        {
+            OnHappened(this, new ExecutorEventArgs(nextExecutorName));
+            throw new NotImplementedException();
         }
     }
 }

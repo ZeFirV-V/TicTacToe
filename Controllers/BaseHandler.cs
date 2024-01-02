@@ -1,24 +1,71 @@
-﻿using TicTacToe.CommandsExecutor.Interfaces;
-using TicTacToe.Models.Contexts.ApplicationContext.Interfaces;
+﻿using TicTacToe.Models.Contexts.GameContext.Interfaces;
+using TicTacToe.Models.Enums;
+using TicTacToe.Services;
+using TicTacToe.View;
 
 namespace TicTacToe.Controllers
 {
     public abstract class BaseHandler
     {
-        private IApplicationContext applicationContext;
+        private IGameContext gameContext;
+        private IApplicationView applicationView;
+        private ExecutorsService executorsService;
 
-        protected BaseHandler(IApplicationContext applicationContext) 
+        protected BaseHandler(IGameContext gameContext, IApplicationView applicationView, ExecutorsService executorsService) 
         {
-            this.applicationContext = applicationContext;
+            this.gameContext = gameContext;
+            this.applicationView = applicationView;
+            this.executorsService = executorsService;
         }
 
-        protected abstract void CreateGame();
-        protected abstract void UpdateGame();
-        protected abstract void ContinueGame();
-        protected abstract void LoadGame();
-        protected abstract void SaveGame();
-        protected abstract void StopGame();
-        protected abstract void ExitApplication();
+        public void ExecuteCommand(string command)
+        {
+            var commandsArgs = new[] { command };
+            executorsService.CurrentCommandExecutor.Execute(commandsArgs);
+        }
 
+        public bool CheckEndApplication()
+        {
+            return executorsService.CurrentCommandExecutor.ExecutorApplicationState == ApplicationState.empty;
+        }
+
+        public bool CheckIsPlay()
+        {
+            return executorsService.CurrentCommandExecutor.ExecutorApplicationState == ApplicationState.game;
+        }
+
+        public bool CheckContinueGame()
+        {
+            return gameContext.GameState == GameState.Game;
+        }
+
+        public bool CheckEndGame()
+        {
+            return gameContext.GameState == GameState.EndGame;
+        }
+
+        public void ViewAllAvailableCommands()
+        {
+            applicationView.ViewText("Доступные команды");
+            executorsService.GetCommandsNamesCurrentExecutor().ToList().ForEach(s => applicationView.ViewText(s));
+        }
+
+        public void ViewGameBoard()
+        {
+            applicationView.ViewText("Игровая доска");
+            applicationView.ViewGame(gameContext.MatchInfo.GameBoard.GetMap());
+        }
+
+        public void ViewEndGame()
+        {
+            applicationView.ViewText("Игра завершена");
+            if(gameContext.MatchInfo.CheckWin())
+                applicationView.ViewText($"Выйграл {gameContext.MatchInfo.GetWinnerGamePlayerName()}");
+            else
+            {
+                applicationView.ViewText($"Ничья");
+            }
+
+        }
     }
 }

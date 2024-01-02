@@ -1,40 +1,31 @@
-﻿using TicTacToe.Entities;
-using TicTacToe.Enums;
-using TicTacToe.Helpers;
-
-namespace TicTacToe.Entities.Creators
+﻿namespace TicTacToe.Entities.Creators
 {
-    public static class PlayerCreator
+    public class PlayerCreator
     {
-        private static int playerNumber = 1;
-        private static List<Symbols> busySymbols = new List<Symbols>();
+        private int playerNumber;
+        private List<char> busySymbols;
 
-        public static Symbols ReadPlayerSymbol(TextWriter writer, TextReader reader)
+        public PlayerCreator()
         {
-            Symbols playerSymbol;
-            bool symbolChosen;
-            do
-            {
-                writer.WriteLine($"Введите обозначение (O или X) для {playerNumber}-го игрока:");
-                string playerSymbolString = reader.ReadLine().ToLower();
-                symbolChosen = SymbolsConvertor.TryConvertStringToSymbol(playerSymbolString, out playerSymbol);
-                if (symbolChosen && !CheckFreeSymbol(playerSymbol))
-                {
-                    writer.WriteLine($"{playerSymbolString} уже занят");
-                    symbolChosen = false;
-                }
-            }
-            while (!symbolChosen);
-            return playerSymbol;
+            busySymbols = new List<char>();
+            playerNumber = 1;
         }
 
-        public static string ReadPlayerName(TextWriter writer, TextReader reader)
+        public char ReadPlayerSymbol(TextWriter writer, TextReader reader)
+        {
+            writer.WriteLine($"Введите обозначение (O или X) для {playerNumber}-го игрока:");
+
+            var playerSymbolString = reader.ReadLine().ToLower();
+            return playerSymbolString[0];
+        }
+
+        public string ReadPlayerName(TextWriter writer, TextReader reader)
         {
             writer.WriteLine($"Введите имя {playerNumber}-го игрока:");
             return reader.ReadLine();
         }
 
-        public static Player CreatePlayer(TextWriter writer, TextReader reader)
+        public Player CreatePlayer(TextWriter writer, TextReader reader)
         {
             var playerName = ReadPlayerName(writer, reader);
             var playerSymbol = ReadPlayerSymbol(writer, reader);
@@ -44,7 +35,7 @@ namespace TicTacToe.Entities.Creators
             return player;
         }
 
-        private static bool CheckFreeSymbol(Symbols symbol)
+        private bool CheckFreeSymbol(char symbol)
         {
             return !busySymbols.Contains(symbol);
         }

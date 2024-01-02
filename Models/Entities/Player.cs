@@ -1,16 +1,14 @@
-﻿using TicTacToe.Enums;
-
-namespace TicTacToe.Entities
+﻿namespace TicTacToe.Entities
 {
     public class Player
     {
         public string Name { get; }
-        public Symbols GameSymbol { get; }
+        public char GameIdentificationMark { get; }
 
-        public Player(string name, Symbols gameSymbol)
+        public Player(string name, char gameIdentificationMark)
         {
             Name = name;
-            GameSymbol = gameSymbol;
+            GameIdentificationMark = gameIdentificationMark;
         }
     }
 }

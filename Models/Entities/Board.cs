@@ -1,39 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicTacToe.Enums;
+﻿using System.Drawing;
+using TicTacToe.Models.Entities;
 
 namespace TicTacToe.Entities
 {
     public class Board
     {
         public int Size { get; }
-        private Symbols[,] map;
+        private char[,] freeMap;
         public Board(int size)
         {
             Size = size;
-            map = new Symbols[Size, Size];
+            freeMap = new char[Size, Size];
         }
 
-        public Symbols[,] GetMap()
+        public char[,] GetMap()
         {
-            return (Symbols[,])map.Clone();
+            return (char[,])freeMap.Clone();
         }
 
-        public Symbols GetCell(Point point)
+        public bool CheckFreeCell(Point point)
         {
-            return map[point.X, point.Y];
+            return freeMap[point.X, point.Y] == '\0';
         }
 
-        public bool SetCell(Point point, Symbols symbol)
+        public void SetCell(GameAction action)
         {
-            if (GetCell(point) != Symbols.empty)
-                return false;
-            map[point.X, point.Y] = symbol;
-            return true;
+            freeMap[action.GamePoint.X, action.GamePoint.Y] = action.Player.GameIdentificationMark;
         }
 
         public bool CheckMapPoint(Point point)

@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Folder Include="Models\Commands\GameMenuCommands\" />
-    <Folder Include="Models\Commands\GameCommands\" />
   </ItemGroup>
 
 </Project>

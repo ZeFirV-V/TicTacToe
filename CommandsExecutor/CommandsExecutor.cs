@@ -1,15 +1,15 @@
 ﻿using TicTacToe.CommandsExecutor.Interfaces;
-using TicTacToe.CustomsEventArgs;
 using TicTacToe.Models.Commands;
-using TicTacToe.Models.Contexts.ApplicationContext.Interfaces;
+using TicTacToe.Models.Contexts.GameContext.Interfaces;
+using TicTacToe.Models.Enums;
 using TicTacToe.View;
 
 namespace TicTacToe.CommandsExecutor
 {
-    public class MainMenuCommandsExecutor : BaseCommandsExecutor
+    public class CommandsExecutor : BaseCommandsExecutor
     {
-        public MainMenuCommandsExecutor(string nameExecutor, IApplicationContext applicationContext, IApplicationView applicationView) 
-            : base(nameExecutor, applicationContext, applicationView)
+        public CommandsExecutor(string nameExecutor, ApplicationState executorApplicationState, IGameContext gameContext, IApplicationView applicationView) 
+            : base(nameExecutor, executorApplicationState, gameContext, applicationView)
         {
         }
 
@@ -28,7 +28,7 @@ namespace TicTacToe.CommandsExecutor
         {
             if (args[0].Length == 0)
             {
-                //Console.WriteLine("Please specify <command> as the first command line argument");
+                applicationView.ViewText("Please specify <command> as the first command line argument");
                 return;
             }
 
@@ -36,10 +36,12 @@ namespace TicTacToe.CommandsExecutor
             var cmd = FindCommandByName(commandName);
             if (cmd == null)
             {
-                //writer.WriteLine($"Sorry. Unknown command {commandName}");
+                applicationView.ViewText($"Sorry. Unknown command {commandName}");
             }
             else
-                cmd.Execute(applicationContext, applicationView);
+            {
+                cmd.Execute(new CommandContext(commandName));
+            }
         }
 
         private BaseCommand? FindCommandByName(string name)
@@ -48,4 +50,3 @@ namespace TicTacToe.CommandsExecutor
         }
     }
 }
-
